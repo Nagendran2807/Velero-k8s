@@ -1,0 +1,65 @@
+# Create namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero-nginx-test-pv
+
+
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc
+  namespace: velero-nginx-test-pv
+  labels:
+    app: nginx
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: velero-nginx-test-pv
+  labels:
+    app: nginx
+    env: test
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          protocol: TCP
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html" 
+          name: nginx-pvc-volume
+  volumes:
+    - name: nginx-pvc-volume
+      persistentVolumeClaim:
+          claimName: nginx-pvc 
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: velero-nginx-test-pv
+  name: nginx-service 
+spec:
+  selector:
+    app: nginx
+    env: test
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+
+

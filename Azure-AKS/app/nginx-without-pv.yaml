@@ -1,0 +1,46 @@
+# Create namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero-nginx-test
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: velero-nginx-test
+  labels:
+    app: nginx
+    env: test
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          protocol: TCP
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: velero-nginx-test 
+  name: nginx-service 
+spec:
+  selector:
+    app: nginx
+    env: test
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+
+# In AKS environment default storage class for persistent volume claim is a standard Azure managed disk
+
