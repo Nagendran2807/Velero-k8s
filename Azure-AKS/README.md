@@ -1,5 +1,4 @@
-# Velero-k8s #
-Take a Backup &amp; Restoration in AKS K8s cluster using velero.
+# Backup & Restoration in AKS K8s using Velero #
 
 Velero is an open source tool that helps backup and restore Kubernetes resources. It also helps with migrating Kubernetes resources from one cluster to another. Also, it can help backup/restore data in persistent volumes
 
