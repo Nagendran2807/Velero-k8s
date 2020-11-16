@@ -145,7 +145,7 @@ If we try to browse the webpage using external IP then getting 403 service forbi
 Create index.html file and copy to /usr/shar/nginx/html/ location. 
 ```
 $ kubectl cp app/index.html velero-nginx-test-pv/nginx-pod:/usr/share/nginx/html/
-$ kubectl exec -it velero-nginx-test-pv/nginx-pod -- /bin/bash
+$ kubectl exec -it -n velero-nginx-test-pv nginx-pod -- /bin/bash
 ```
 Let try to refresh the page and see the response.
 
