@@ -5,8 +5,11 @@ Velero is an open source tool that helps backup and restore Kubernetes resources
 Velero Overview - https://github.com/Nagendran2807/Velero-k8s/blob/main/README.md
 
 Below things required to test velero in Azure AKS
+
 (i) One Azure account with proper access 
+
 (ii) AKS Cluster
+
 (iii) Storage account 
 
 Prerequisites:
@@ -37,7 +40,7 @@ First check the all available k8s versions in the region where you going to setu
 ```
 $ az aks get-versions -l $region
 AKS_Cluster_Name="aks-cluster-1"
-$ az aks create --resource-group $Velero_Resource_Group --name $AKS_Cluster_Name --node-count 1 --kubernetes-version 1.18.0
+$ az aks create --resource-group $Velero_Resource_Group --name $AKS_Cluster_Name --node-count 1 --kubernetes-version 1.18.8
 ```
 Created AKS cluster with single node using above command. You can modify the node count using **--node-count** argument
 
@@ -80,7 +83,7 @@ $ brew install velero  ----> Install velero package locally
 
 $ which velero ---> you can verify whether velero executable exist or not 
 ```
-If you are using windows, you can use choco to install velero.
+If you are using windows, you can use **choco** to install velero.
 
 Install Velero Server in AKS Cluster
 ---------------------------------------
@@ -141,8 +144,8 @@ kubectl get po,svc,pvc -n velero-nginx-test-pv
 If we try to browse the webpage using external IP then getting 403 service forbidden error due to empty files in new storage which we created.
 Create index.html file and copy to /usr/shar/nginx/html/ location. 
 ```
-kubectl cp app/index.html nginx-velero-test-pv/nginx-pv-pod:/usr/share/nginx/html/
-kubectl exec -it nginx-velero-test-pv/nginx-pv-pod -- /bin/bash
+kubectl cp app/index.html velero-nginx-test-pv/nginx-pod:/usr/share/nginx/html/
+kubectl exec -it velero-nginx-test-pv/nginx-pod -- /bin/bash
 ```
 Let try to refresh the page and see the response.
 
