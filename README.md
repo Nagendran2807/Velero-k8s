@@ -6,16 +6,19 @@ Velero is an open source tool that helps backup and restore Kubernetes resources
 ![Overview](images/Overview.png)
 
 
-![Overview](images/backed-up-API-versions.png)
+![Backup-flow](images/Backup-flow.png)
 
 
-![Overview](images/velero-ttl.png)
+![backed-up-API](images/backed-up-API-versions.png)
 
 
-![Overview](images/installation.png)
+![velero-ttl](images/velero-ttl.png)
 
 
-![Overview](images/Limitations.png)
+![installation](images/installation.png)
+
+
+![Limitations](images/Limitations.png)
 
 
 ## Backup Hook Feature ##
