@@ -120,16 +120,16 @@ Backup & Restore in AKS cluster using Velero without persistent volume
 Deploy nginx pod and expose it as Load Balancer service
 ```
 kubectl apply -f app/nginx-without-pv.yaml
-kubectl get po,svc -n nginx-velero-test
+kubectl get po,svc -n velero-nginx-test
 
-velero backup create nginx-velero-test 
+velero backup create nginx-test
 velero get backup
-velero describe backup nginx-velero-test 
-velero restore create --from-backup nginx-velero-test 
+velero describe backup nginx-test 
+velero restore create --from-backup nginx-test 
 ```
 If want to schedule a backup every 24 hrs then use below command.
 ```
-velero create schedule nginx-velero-test  --schedule ="@every 24h"
+velero create schedule nginx-test  --schedule ="@every 24h"
 ```
 
 Backup & Restore in AKS cluster using Velero with persistent volume
@@ -137,7 +137,7 @@ Backup & Restore in AKS cluster using Velero with persistent volume
 Deploy nginx pod with persistent volume and expose it as Load Balancer service
 ```
 kubectl apply -f app/nginx-with-pv.yaml
-kubectl get po,svc,pvc -n nginx-velero-test-pv
+kubectl get po,svc,pvc -n velero-nginx-test-pv
 ```
 If we try to browse the webpage using external IP then getting 403 service forbidden error due to empty files in new storage which we created.
 Create index.html file and copy to /usr/shar/nginx/html/ location. 
