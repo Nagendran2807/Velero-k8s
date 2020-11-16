@@ -30,8 +30,8 @@ Setup AKS Cluster
 ----------------------
 **Step 1**: Create Resource Group 
 ```
-Velero_Resource_Group="aks-test"
-region=eastus
+$ Velero_Resource_Group="aks-test"
+$ region=eastus
 $ az group create --location $region --name $Velero_Resource_Group
 ```
 **Step 2**: Create AKS Cluster
@@ -39,7 +39,7 @@ $ az group create --location $region --name $Velero_Resource_Group
 First check the all available k8s versions in the region where you going to setup AKS
 ```
 $ az aks get-versions -l $region
-AKS_Cluster_Name="aks-cluster-1"
+$ AKS_Cluster_Name="aks-cluster-1"
 $ az aks create --resource-group $Velero_Resource_Group --name $AKS_Cluster_Name --node-count 1 --kubernetes-version 1.18.8
 ```
 Created AKS cluster with single node using above command. You can modify the node count using **--node-count** argument
@@ -65,8 +65,8 @@ Create Storage account
 ---------------------------
 Need one storage account for velero backup files.
 ```
-Velero_Storage_Account="testnewakstorage"
-Velero_SA_blob_Container="testakscontainer"
+$ Velero_Storage_Account="testnewakstorage"
+$ Velero_SA_blob_Container="testakscontainer"
 
 $ az storage account create --name $Velero_Storage_Account --resource-group $Velero_Resource_Group --location $region --kind StorageV2 --sku Standard_LRS --encryption-services blob --https-only true --access-tier Hot
 
@@ -121,39 +121,39 @@ Backup & Restore in AKS cluster using Velero without persistent volume
 -------------------------------------------------------------------------
 Deploy nginx pod and expose it as Load Balancer service
 ```
-kubectl apply -f app/nginx-without-pv.yaml
-kubectl get po,svc -n velero-nginx-test
+$ kubectl apply -f app/nginx-without-pv.yaml
+$ kubectl get po,svc -n velero-nginx-test
 
-velero backup create nginx-test
-velero get backup
-velero describe backup nginx-test 
-velero restore create --from-backup nginx-test 
+$ velero backup create nginx-test
+$ velero get backup
+$ velero describe backup nginx-test 
+$ velero restore create --from-backup nginx-test 
 ```
 If want to schedule a backup every 24 hrs then use below command.
 ```
-velero create schedule nginx-test  --schedule ="@every 24h"
+$ velero create schedule nginx-test  --schedule ="@every 24h"
 ```
 
 Backup & Restore in AKS cluster using Velero with persistent volume
 -------------------------------------------------------------------------
 Deploy nginx pod with persistent volume and expose it as Load Balancer service
 ```
-kubectl apply -f app/nginx-with-pv.yaml
-kubectl get po,svc,pvc -n velero-nginx-test-pv
+$ kubectl apply -f app/nginx-with-pv.yaml
+$ kubectl get po,svc,pvc -n velero-nginx-test-pv
 ```
 If we try to browse the webpage using external IP then getting 403 service forbidden error due to empty files in new storage which we created.
 Create index.html file and copy to /usr/shar/nginx/html/ location. 
 ```
-kubectl cp app/index.html velero-nginx-test-pv/nginx-pod:/usr/share/nginx/html/
-kubectl exec -it velero-nginx-test-pv/nginx-pod -- /bin/bash
+$ kubectl cp app/index.html velero-nginx-test-pv/nginx-pod:/usr/share/nginx/html/
+$ kubectl exec -it velero-nginx-test-pv/nginx-pod -- /bin/bash
 ```
 Let try to refresh the page and see the response.
 
 ```
-velero backup create nginx-pv
-velero get backup
-velero describe backup nginx-pv 
-velero restore create --from-backup nginx-pv
+$ velero backup create nginx-pv
+$ velero get backup
+$ velero describe backup nginx-pv 
+$ velero restore create --from-backup nginx-pv
 ```
 
 Backup hook feature
