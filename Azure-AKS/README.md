@@ -1,7 +1,9 @@
-# Velero-k8s
-Take a Backup &amp; Restoration in K8s cluster using velero.
+# Velero-k8s #
+Take a Backup &amp; Restoration in AKS K8s cluster using velero.
 
 Velero is an open source tool that helps backup and restore Kubernetes resources. It also helps with migrating Kubernetes resources from one cluster to another. Also, it can help backup/restore data in persistent volumes
+
+Velero Overview - https://github.com/Nagendran2807/Velero-k8s/blob/main/README.md
 
 Below things required to test velero in Azure AKS
 (i) One Azure account with proper access 
@@ -24,13 +26,13 @@ $ az login
 ```
 Setup AKS Cluster
 ----------------------
-Step 1: Create Resource Group 
+**Step 1**: Create Resource Group 
 ```
 Velero_Resource_Group="aks-test"
 region=eastus
 $ az group create --location $region --name $Velero_Resource_Group
 ```
-Step 2: Create AKS Cluster
+**Step 2**: Create AKS Cluster
 
 First check the all available k8s versions in the region where you going to setup AKS
 ```
@@ -38,19 +40,19 @@ $ az aks get-versions -l $region
 AKS_Cluster_Name="aks-cluster-1"
 $ az aks create --resource-group $Velero_Resource_Group --name $AKS_Cluster_Name --node-count 1 --kubernetes-version 1.18.0
 ```
-Created AKS cluster with single node using above command. You can modify the node count using --node-count argument
+Created AKS cluster with single node using above command. You can modify the node count using **--node-count** argument
 
-Step 3: Verify the AKS Cluster which we created
+**Step 3**: Verify the AKS Cluster which we created
 ```
 $ az aks show --name $AKS_Cluster_Name --resource-group $Velero_Resource_Group
 ```
 
-Step 4: Configure kubeconfig to local 
+**Step 4**: Configure kubeconfig to local 
 
 A file that is used to configure access to clusters is called a kubeconfig file. 
 This is a generic way of referring to configuration files. It does not mean that there is a file named kubeconfig.
 
-By default, kubectl looks for a file named config in the $HOME/.kube directory. You can specify other kubeconfig files by setting the KUBECONFIG environment variable or by setting the --kubeconfig flag
+By default, kubectl looks for a file named config in the $HOME/.kube directory. You can specify other kubeconfig files by setting the KUBECONFIG environment variable or by setting the **--kubeconfig flag**
 ```
 $ az aks get-credentials --resource-group $Velero_Resource_Group --name $AKS_Cluster_Name
 
@@ -79,6 +81,8 @@ $ brew install velero  ----> Install velero package locally
 
 $ which velero ---> you can verify whether velero executable exist or not 
 ```
+If you are using windows, you can use choco to install velero.
+
 Install Velero Server in AKS Cluster
 ---------------------------------------
 Need to pass some variables to install velero in AKS cluster
@@ -108,24 +112,24 @@ velero install \
 --snapshot-location-config apiTimeout=5m,resourceGroup=$Velero_Resource_Group,subscriptionId=$AZURE_SUBSCRIPTION_ID
 ```
 Get all resources in velero namespace 
-
+```
 $ kubectl get all -n velero
-
+```
 Backup & Restore in AKS cluster using Velero without persistent volume
 -------------------------------------------------------------------------
 Deploy nginx pod and expose it as Load Balancer service
 ```
 kubectl apply -f app/nginx-without-pv.yaml
-kubectl get po,svc -n nginx-test
+kubectl get po,svc -n nginx-velero-test
 
-velero backup create nginx-test 
+velero backup create nginx-velero-test 
 velero get backup
-velero describe backup nginx-test 
-velero restore create --from-backup nginx-test
+velero describe backup nginx-velero-test 
+velero restore create --from-backup nginx-velero-test 
 ```
 If want to schedule a backup every 24 hrs then use below command.
 ```
-velero create schedule nginx-test --schedule ="@every 24h"
+velero create schedule nginx-velero-test  --schedule ="@every 24h"
 ```
 
 Backup & Restore in AKS cluster using Velero with persistent volume
@@ -133,8 +137,17 @@ Backup & Restore in AKS cluster using Velero with persistent volume
 Deploy nginx pod with persistent volume and expose it as Load Balancer service
 ```
 kubectl apply -f app/nginx-with-pv.yaml
-kubectl get po,svc,pvc -n nginx-test-pv
+kubectl get po,svc,pvc -n nginx-velero-test-pv
+```
+If we try to browse the webpage using external IP then getting 403 service forbidden error due to empty files in new storage which we created.
+Create index.html file and copy to /usr/shar/nginx/html/ location. 
+```
+kubectl cp app/index.html nginx-velero-test-pv/nginx-pv-pod:/usr/share/nginx/html/
+kubectl exec -it nginx-velero-test-pv/nginx-pv-pod -- /bin/bash
+```
+Let try to refresh the page and see the response.
 
+```
 velero backup create nginx-pv
 velero get backup
 velero describe backup nginx-pv 
